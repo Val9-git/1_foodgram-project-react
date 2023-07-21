@@ -153,9 +153,9 @@ DJOSER = {
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -175,3 +175,13 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+PROJECT_CONSTANTS = {
+    "LENGTH_SHORTWORD": 50,
+    "LENGTH_TAG_NAME": 100,
+    "LENGTH_MEASUREMENT_UNIT": 10,
+    "LENGTH_HEX_COLOR": 7,
+    "LENGTH_WORD": 150,
+    "LENGTH_EMAIL": 254,
+    "LENGTH_PASSWORD": 500,
+}

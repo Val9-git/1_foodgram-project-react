@@ -15,13 +15,18 @@ from .serializers import (CustomUserSerializer, SubscriptionSerializer,
                           #   IngredientSerializer,
                           #   RecipeCreateSerializer, RecipeReadSerializer,
                           #   ShortRecipeSerializer,
-                          #   TagSerializer
+                          TagSerializer
                           )
 # from api.filters import IngredientFilter, RecipeFilter
-# from api.mixins import OnlyGetViewSet
-# from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-# from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
-# Recipe, ShoppingCart, Tag)
+from api.mixins import CustomGetViewSet
+from api.permissions import (IsAdminOrReadOnly,
+                             #   IsAuthorOrReadOnly
+                             )
+from recipes.models import (
+                            # AmountIngredient, FavoriteRecipe, Ingredient,
+                            # Recipe, ShoppingCart,
+                            Tag
+                             )
 from users.models import Subscription, User
 
 
@@ -94,3 +99,12 @@ class UsersViewSet(DjoserUserViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         Subscription.objects.filter(author=author, user=request.user).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TagViewSet(CustomGetViewSet):
+    """Вьюсет для ярлыков."""
+
+    serializer_class = TagSerializer
+    queryset = Tag.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None

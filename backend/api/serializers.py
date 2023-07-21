@@ -7,8 +7,11 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 # from rest_framework.serializers import PrimaryKeyRelatedField
 
-# from recipes.models import (AmountIngredient, FavoriteRecipe, Ingredient,
-#                             Recipe, ShoppingCart, Tag)
+from recipes.models import (
+                            # AmountIngredient, FavoriteRecipe, Ingredient,
+                            # Recipe, ShoppingCart,
+                            Tag
+                            )
 from users.models import Subscription, User
 
 
@@ -93,3 +96,9 @@ class SubscriptionSerializer(CustomUserSerializer):
             if author == request.user:
                 raise ValidationError("Подписка на себя")
         return data
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "color", "slug")
