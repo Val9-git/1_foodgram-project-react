@@ -8,9 +8,9 @@ from rest_framework.exceptions import ValidationError
 # from rest_framework.serializers import PrimaryKeyRelatedField
 
 from recipes.models import (
-                            # AmountIngredient, FavoriteRecipe, Ingredient,
+                            # AmountIngredient, FavoriteRecipe,
                             # Recipe, ShoppingCart,
-                            Tag
+                            Tag, Ingredient
                             )
 from users.models import Subscription, User
 
@@ -99,6 +99,15 @@ class SubscriptionSerializer(CustomUserSerializer):
 
 
 class TagSerializer(serializers.ModelSerializer):
+    """Сериализатор ярлыков."""
     class Meta:
         model = Tag
-        fields = ("id", "name", "color", "slug")
+        fields = '__all__'
+
+
+class IngredientSerializer(serializers.ModelSerializer):
+    """Сериализатор ингредиентов."""
+
+    class Meta:
+        model = Ingredient
+        fields = '__all__'

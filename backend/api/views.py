@@ -12,20 +12,21 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .serializers import (CustomUserSerializer, SubscriptionSerializer,
-                          #   IngredientSerializer,
+                          IngredientSerializer,
                           #   RecipeCreateSerializer, RecipeReadSerializer,
                           #   ShortRecipeSerializer,
                           TagSerializer
                           )
-# from api.filters import IngredientFilter, RecipeFilter
+from api.filters import IngredientFilter
+# ,RecipeFilter
 from api.mixins import CustomGetViewSet
 from api.permissions import (IsAdminOrReadOnly,
                              #   IsAuthorOrReadOnly
                              )
 from recipes.models import (
-                            # AmountIngredient, FavoriteRecipe, Ingredient,
+                            # AmountIngredient, FavoriteRecipe,
                             # Recipe, ShoppingCart,
-                            Tag
+                            Tag, Ingredient
                              )
 from users.models import Subscription, User
 
@@ -107,4 +108,15 @@ class TagViewSet(CustomGetViewSet):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
+
+
+class IngredientViewSet(CustomGetViewSet):
+    """Вьюсет для ингредиентов."""
+
+    serializer_class = IngredientSerializer
+    queryset = Ingredient.objects.all()
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = [IngredientFilter]
+    search_fields = ["^name"]
     pagination_class = None

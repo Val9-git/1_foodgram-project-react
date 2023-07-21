@@ -1,5 +1,6 @@
 from django.db import models
 from foodgram.settings import PROJECT_CONSTANTS
+from users.models import User
 
 
 class Tag(models.Model):
@@ -26,3 +27,25 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.slug
+
+
+class Ingredient(models.Model):
+    """Ингредиенты, задаётся админом."""
+    name = models.CharField(
+        blank=False,
+        max_length=PROJECT_CONSTANTS["LENGTH_INGRIDIENT_NAME"],
+        verbose_name='Название ингредиента',
+    )
+    measurement_unit = models.CharField(
+        blank=False,
+        max_length=PROJECT_CONSTANTS["LENGTH_MEASUREMENT_UNIT"],
+        verbose_name='Единица измерения',
+    )
+
+    class Meta:
+        ordering = ('name',)
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
+
+    def __str__(self):
+        return f'{self.name}, {self.measurement_unit}'
