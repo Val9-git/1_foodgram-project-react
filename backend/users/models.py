@@ -52,17 +52,14 @@ class User(AbstractUser):
 
     @property
     def is_guest(self):
-        """Checking for unauthorized user rights (guest)."""
         return self.role == self.GUEST
 
     @property
     def is_authorized(self):
-        """Checking for authorized user rights."""
         return self.role == self.AUTHORIZED
 
     @property
     def is_admin(self):
-        """Checking for administrator rights."""
         return self.role == self.ADMIN or self.is_superuser
 
     class Meta:
