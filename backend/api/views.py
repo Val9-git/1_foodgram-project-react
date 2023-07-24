@@ -23,7 +23,7 @@ class UsersViewSet(DjoserUserViewSet):
     """Вьюсет для пользователей и подписок."""
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
-    search_fields = ("username",)
+    search_fields = ('username',)
     permission_classes = (permissions.AllowAny,)
     # http_method_names = ['get', 'post', 'patch', 'delete']
     # lookup_field = 'username'
@@ -38,7 +38,7 @@ class UsersViewSet(DjoserUserViewSet):
                 .annotate(
                     is_subscribed=Case(
                         When(
-                            following__user=request_user,
+                            subscribing__user=request_user,
                             then=True,
                         ),
                         default=False,
@@ -50,7 +50,7 @@ class UsersViewSet(DjoserUserViewSet):
 
     @action(
         detail=False,
-        methods=("get", "post"),
+        methods=('get', 'post'),
     )
     def me(self, request, *args, **kwargs):
         self.object = get_object_or_404(User, pk=request.user.id)
@@ -58,31 +58,31 @@ class UsersViewSet(DjoserUserViewSet):
         return Response(serializer.data)
 
     @action(
-        methods=["get"], detail=False, permission_classes=[IsAuthenticated]
+        methods=['get'], detail=False, permission_classes=[IsAuthenticated]
     )
     def subscriptions(self, request):
         subscriptions = User.objects.filter(
-            following__user=request.user
-        ).annotate(recipes_count=Count("recipe_posts"))
+            subscribing__user=request.user
+        ).annotate(recipes_count=Count('recipes'))
         page = self.paginate_queryset(subscriptions)
         serializer = SubscriptionSerializer(
-            page, many=True, context={"request": request}
+            page, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
 
     @action(
-        methods=["post", "delete"],
+        methods=['post', 'delete'],
         detail=True,
         permission_classes=[IsAuthenticated],
     )
     def subscribe(self, request, id):
         author = get_object_or_404(User, id=id)
-        author.recipes_count = author.recipe_posts.count()
+        author.recipes_count = author.recipes.count()
         serializer = SubscriptionSerializer(
-            author, data=request.data, context={"request": request}
+            author, data=request.data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
-        if request.method == "POST":
+        if request.method == 'POST':
             Subscription.objects.create(user=request.user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         Subscription.objects.filter(author=author, user=request.user).delete()
@@ -103,7 +103,7 @@ class IngredientViewSet(CustomGetViewSet):
     queryset = Ingredient.objects.all()
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = [IngredientFilter]
-    search_fields = ["^name"]
+    search_fields = ['^name']
     pagination_class = None
 
 
@@ -186,7 +186,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         if not check_exist_cart:
             return Response(
-                {'errors': 'Рецепт не был в корзине'},
+                {'errors': 'Рецепта нет в корзине'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         else:
@@ -208,8 +208,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             IngredientAmount.objects.filter(
                 recipe__shoppingcart__user=request.user
             )
-            .values("ingredients__name", "ingredients__measurement_unit")
-            .annotate(sum_amount=Sum("amount"))
+            .values('ingredients__name', 'ingredients__measurement_unit')
+            .annotate(sum_amount=Sum('amount'))
         )
         for item in ingreds:
             name = item['ingredients__name']

@@ -7,12 +7,12 @@ from users.models import User
 class Tag(models.Model):
     """Ярлыки, задаётся админом."""
     name = models.CharField(
-        max_length=PROJECT_CONSTANTS["LENGTH_TAG_NAME"],
+        max_length=PROJECT_CONSTANTS['LENGTH_TAG_NAME'],
         unique=True,
         verbose_name='Имя ярлыка',
     )
     color = models.CharField(
-        max_length=PROJECT_CONSTANTS["LENGTH_HEX_COLOR"],
+        max_length=PROJECT_CONSTANTS['LENGTH_HEX_COLOR'],
         unique=True,
         verbose_name='Цвет (HEX code)',
         default='#18c4e8',
@@ -33,12 +33,12 @@ class Ingredient(models.Model):
     """Ингредиенты, задаётся админом."""
     name = models.CharField(
         blank=False,
-        max_length=PROJECT_CONSTANTS["LENGTH_INGRIDIENT_NAME"],
+        max_length=PROJECT_CONSTANTS['LENGTH_INGRIDIENT_NAME'],
         verbose_name='Название ингредиента',
     )
     measurement_unit = models.CharField(
         blank=False,
-        max_length=PROJECT_CONSTANTS["LENGTH_MEASUREMENT_UNIT"],
+        max_length=PROJECT_CONSTANTS['LENGTH_MEASUREMENT_UNIT'],
         verbose_name='Единица измерения',
     )
 
@@ -55,7 +55,7 @@ class Recipe(models.Model):
     """Рецепты."""
     name = models.CharField(
         verbose_name='Название рецепта',
-        max_length=PROJECT_CONSTANTS["LENGTH_RECIPE_NAME"],
+        max_length=PROJECT_CONSTANTS['LENGTH_RECIPE_NAME'],
         unique=True,
         help_text='Ввод названия рецепта',
     )
@@ -66,7 +66,7 @@ class Recipe(models.Model):
     pub_date = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True
-        )
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

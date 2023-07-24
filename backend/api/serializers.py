@@ -51,11 +51,11 @@ class SubscriptionSerializer(CustomUserSerializer):
     class Meta:
         model = User
         fields = (
+            'email',
             'id',
             'username',
             'first_name',
             'last_name',
-            'email',
             'is_subscribed',
             'recipes',
             'recipes_count',
@@ -68,14 +68,14 @@ class SubscriptionSerializer(CustomUserSerializer):
             'recipes_count',
         )
 
-    # def get_recipes(self, obj):
-    #     request = self.context.get("request")
-    #     recipes_limit = request.GET.get("recipes_limit")
-    #     recipes = obj.recipe_posts.all()
-    #     if recipes_limit:
-    #         recipes = recipes[: int(recipes_limit)]
-    #     serializer = ShortRecipeSerializer(recipes, many=True)
-    #     return serializer.data
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes_limit = request.GET.get('recipes_limit')
+        recipes = obj.recipes.all()
+        if recipes_limit:
+            recipes = recipes[: int(recipes_limit)]
+        serializer = ShortRecipeSerializer(recipes, many=True)
+        return serializer.data
 
     def validate(self, data):
         request = self.context.get('request')
