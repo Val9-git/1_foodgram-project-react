@@ -29,8 +29,6 @@ class IngredientsInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Модель рецептов в админпанели."""
     list_display = ('id', 'name', 'author', 'text', 'added_to_favorites',)
-    # list_display_links = ['name']
-    # search_fields = ('author', 'name', 'tags',)
     list_filter = ['name', 'author', 'tags']
     inlines = (IngredientsInline,)
     readonly_fields = ("added_to_favorites",)
@@ -38,11 +36,6 @@ class RecipeAdmin(admin.ModelAdmin):
     @staticmethod
     def added_to_favorites(obj):
         return obj.favorites.count()
-
-    # def added_to_favorites(self, obj):
-    #     return Favorites.objects.filter(recipe=obj).count()
-
-    # added_to_favorites.short_description = 'Количество рецептов в избранном'
 
 
 @admin.register(Favorites)

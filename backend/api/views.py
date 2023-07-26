@@ -25,7 +25,6 @@ class UsersViewSet(DjoserUserViewSet):
     serializer_class = CustomUserSerializer
     search_fields = ('username',)
     permission_classes = (permissions.AllowAny,)
-    # http_method_names = ['get', 'post', 'patch', 'delete']
     # lookup_field = 'username'
 
     def get_queryset(self):
@@ -129,7 +128,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             IsAuthorOrReadOnly,
         ),
     )
-    def favorites(self, request, pk=None):
+    def favorite(self, request, pk=None):
         recipe = get_object_or_404(Recipe, id=pk)
         check_exist_favorites = Favorites.objects.filter(
             user=request.user, recipe=recipe

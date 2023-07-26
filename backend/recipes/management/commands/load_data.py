@@ -7,15 +7,6 @@ from django.conf import settings
 from django.core.management import BaseCommand, CommandError
 from recipes.models import Ingredient
 
-# TABLES = {
-#     User: 'users.csv',
-#     Category: 'category.csv',
-#     Genre: 'genre.csv',
-#     Title: 'titles.csv',
-#     Review: 'review.csv',
-#     Comment: 'comments.csv',
-# }
-
 DATA_PATH = os.path.join(settings.BASE_DIR, 'data')
 INGREDIENTS_DATA = os.path.join(DATA_PATH, 'ingredients.csv')
 

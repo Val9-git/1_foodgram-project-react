@@ -105,12 +105,16 @@ class IngredientSerializer(serializers.ModelSerializer):
     """Сериализатор ингредиентов."""
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit')
 
 
 class IngredientAmountSerializer(serializers.ModelSerializer):
     """Сериализатор количества ингредиентов в рецепте."""
-    id = PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    id = PrimaryKeyRelatedField(
+        queryset=Ingredient.objects.all(),
+        # source='ingredient.id'
+    )
 
     class Meta:
         model = IngredientAmount
@@ -130,17 +134,18 @@ class Base64ImageField(serializers.ImageField):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецепта."""
     ingredients = IngredientAmountSerializer(many=True)
+
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True
     )
     image = Base64ImageField()
-    # author = CustomUserSerializer(read_only=True)
 
     class Meta:
         model = Recipe
         fields = (
             # 'id',
             'ingredients',
+            # 'ingredients_data',
             'tags',
             'image',
             # 'author',
@@ -210,13 +215,30 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
     def get_ingredients(self, recipe):
-        ingredients = recipe.ingredients.values(
-            'id',
-            'name',
-            'measurement_unit',
-            amount=F('ingredient__amount')
+        ingredients_data = recipe.ingredients.through.objects.filter(
+            recipe=recipe).values(
+            'ingredients__id',
+            'ingredients__name',
+            'ingredients__measurement_unit',
+            'amount',
         )
-        return ingredients
+        return ingredients_data
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        ingredients_data = representation['ingredients']
+        ingredients_list = []
+        for ingredient_data in ingredients_data:
+            ingredient = {
+                'id': ingredient_data['ingredients__id'],
+                'name': ingredient_data['ingredients__name'],
+                'measurement_unit': ingredient_data[
+                    'ingredients__measurement_unit'],
+                'amount': ingredient_data['amount']
+            }
+            ingredients_list.append(ingredient)
+        representation['ingredients'] = ingredients_list
+        return representation
 
     def get_is_favorited(self, obj):
         user = self.context['request'].user
@@ -241,4 +263,4 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ("id", "name", "image", "cooking_time")
+        fields = ('id', 'name', 'image', 'cooking_time')

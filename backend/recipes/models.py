@@ -95,20 +95,6 @@ class Recipe(models.Model):
         validators=[MinValueValidator(1)],
     )
 
-    # def ingredients_names(self):
-    #     return " %s" % (
-    #         ", ".join(
-    #             [ingredient.name for ingredient in self.ingredients.all()]
-    #         )
-    #     )
-
-    # ingredients_names.short_description = "Ингредиенты"
-
-    # def tags_slug(self):
-    #     return " %s" % (", ".join([tag.slug for tag in self.tags.all()]))
-
-    # tags_slug.short_description = "Теги"
-
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
