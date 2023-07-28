@@ -1,6 +1,6 @@
-import base64
+# import base64
 
-from django.core.files.base import ContentFile
+# from django.core.files.base import ContentFile
 from django.db.models import F
 from djoser.serializers import UserSerializer
 from recipes.models import (Favorites, Ingredient, IngredientAmount, Recipe,
@@ -9,6 +9,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
 from users.models import Subscription, User
+from utils import Base64ImageField
 
 
 class CustomUserSerializer(UserSerializer):
@@ -121,14 +122,14 @@ class IngredientAmountSerializer(serializers.ModelSerializer):
         fields = ('id', 'amount')
 
 
-class Base64ImageField(serializers.ImageField):
-    """Сериализатор изображений."""
-    def to_internal_value(self, data):
-        if isinstance(data, str) and data.startswith('data:image'):
-            format, imgstr = data.split(';base64,')
-            ext = format.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-        return super().to_internal_value(data)
+# class Base64ImageField(serializers.ImageField):
+#     """Сериализатор изображений."""
+#     def to_internal_value(self, data):
+#         if isinstance(data, str) and data.startswith('data:image'):
+#             format, imgstr = data.split(';base64,')
+#             ext = format.split('/')[-1]
+#             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+#         return super().to_internal_value(data)
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):

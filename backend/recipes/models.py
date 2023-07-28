@@ -1,18 +1,20 @@
+from constants import (LENGTH_HEX_COLOR, LENGTH_INGRIDIENT_NAME,
+                       LENGTH_MEASUREMENT_UNIT, LENGTH_RECIPE_NAME,
+                       LENGTH_TAG_NAME)
 from django.core.validators import MinValueValidator
 from django.db import models
-from foodgram.settings import PROJECT_CONSTANTS
 from users.models import User
 
 
 class Tag(models.Model):
     """Ярлыки, задаётся админом."""
     name = models.CharField(
-        max_length=PROJECT_CONSTANTS['LENGTH_TAG_NAME'],
+        max_length=LENGTH_TAG_NAME,
         unique=True,
         verbose_name='Имя ярлыка',
     )
     color = models.CharField(
-        max_length=PROJECT_CONSTANTS['LENGTH_HEX_COLOR'],
+        max_length=LENGTH_HEX_COLOR,
         unique=True,
         verbose_name='Цвет (HEX code)',
         default='#18c4e8',
@@ -33,12 +35,12 @@ class Ingredient(models.Model):
     """Ингредиенты, задаётся админом."""
     name = models.CharField(
         blank=False,
-        max_length=PROJECT_CONSTANTS['LENGTH_INGRIDIENT_NAME'],
+        max_length=LENGTH_INGRIDIENT_NAME,
         verbose_name='Название ингредиента',
     )
     measurement_unit = models.CharField(
         blank=False,
-        max_length=PROJECT_CONSTANTS['LENGTH_MEASUREMENT_UNIT'],
+        max_length=LENGTH_MEASUREMENT_UNIT,
         verbose_name='Единица измерения',
     )
 
@@ -55,7 +57,7 @@ class Recipe(models.Model):
     """Рецепты."""
     name = models.CharField(
         verbose_name='Название рецепта',
-        max_length=PROJECT_CONSTANTS['LENGTH_RECIPE_NAME'],
+        max_length=LENGTH_RECIPE_NAME,
         unique=True,
         help_text='Ввод названия рецепта',
     )
@@ -90,7 +92,7 @@ class Recipe(models.Model):
         blank=True
     )
 
-    cooking_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
         validators=[MinValueValidator(1)],
     )
@@ -120,7 +122,8 @@ class IngredientAmount(models.Model):
     )
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
-        default=0
+        default=0,
+        validators=[MinValueValidator(1)],
     )
 
     class Meta:

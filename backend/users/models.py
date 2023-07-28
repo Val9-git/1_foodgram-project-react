@@ -1,3 +1,5 @@
+from constants import (LENGTH_EMAIL, LENGTH_PASSWORD, LENGTH_SHORTWORD,
+                       LENGTH_WORD)
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -20,32 +22,32 @@ class User(AbstractUser):
 
     email = models.EmailField(
         verbose_name='Адрес электронной почты',
-        max_length=254,
+        max_length=LENGTH_EMAIL,
         unique=True,
     )
     username = models.CharField(
         verbose_name='Имя пользователя',
-        max_length=150,
+        max_length=LENGTH_WORD,
         blank=False,
         unique=True,
     )
     first_name = models.CharField(
         verbose_name='Имя',
         blank=False,
-        max_length=150,
+        max_length=LENGTH_WORD,
     )
     last_name = models.CharField(
         verbose_name='Фамилия',
         blank=False,
-        max_length=150,
+        max_length=LENGTH_WORD,
     )
     password = models.CharField(
         verbose_name='Пароль',
-        max_length=150,
+        max_length=LENGTH_PASSWORD,
     )
     role = models.CharField(
         verbose_name='Роль',
-        max_length=50,
+        max_length=LENGTH_SHORTWORD,
         choices=ROLES,
         default='guest'
     )
