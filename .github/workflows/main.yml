@@ -105,11 +105,11 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        # source: "infra/docker-compose.yml,infra/nginx.conf,infra/.env"
-        source: |
-          infra/docker-compose.yml
-          infra/nginx.conf
-          infra/.env        
+        source: "infra/docker-compose.yml,infra/nginx.conf"
+        # source: |
+        #   infra/docker-compose.yml
+        #   infra/nginx.conf
+        #   infra/.env        
         target: "foodgram/"
         strip_components: 1
     - name: Executing remote ssh commands to deploy
@@ -121,6 +121,7 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd foodgram
+          export ENV_VAR_NAME=${{ secrets.ENV_VAR_NAME }}
           sudo docker-compose stop
           sudo docker rm val911/foodgram_backend:latest
           sudo docker rm val911/foodgram_frontend:latest  
