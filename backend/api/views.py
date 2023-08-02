@@ -25,7 +25,6 @@ class UsersViewSet(DjoserUserViewSet):
     serializer_class = CustomUserSerializer
     search_fields = ('username',)
     permission_classes = (permissions.AllowAny,)
-    # lookup_field = 'username'
 
     def get_queryset(self):
         request_user = self.request.user
