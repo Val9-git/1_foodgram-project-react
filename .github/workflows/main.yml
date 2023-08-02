@@ -95,6 +95,7 @@ jobs:
         script: |
           cd foodgram
           sudo docker-compose stop
+          # sudo docker-compose rm backend
           # sudo docker rm val911/foodgram_backend:latest
           # sudo docker rm val911/foodgram_frontend:latest 
           sudo docker image prune -f 
