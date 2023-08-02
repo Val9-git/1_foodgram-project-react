@@ -90,49 +90,54 @@ jobs:
   #         push: true
   #         tags: val911/kittygram_gateway:latest
           
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs:
-  #     - build_and_push_to_docker_hub
-  #     - build_frontend_and_push_to_docker_hub
-  #     - build_gateway_and_push_to_docker_hub
-  #   if: github.ref == 'refs/heads/main'
-  #   steps:
-  #   - name: Checkout repo
-  #     uses: actions/checkout@v3
-  #   - name: Copy docker-compose.yml via ssh
-  #     uses: appleboy/scp-action@master
-  #     with:
-  #       host: ${{ secrets.HOST }}
-  #       username: ${{ secrets.USER }}
-  #       key: ${{ secrets.SSH_KEY }}
-  #       passphrase: ${{ secrets.SSH_PASSPHRASE }}
-  #       source: "docker-compose.production.yml"
-  #       target: "kittygram"
-  #   - name: Executing remote ssh commands to deploy
-  #     uses: appleboy/ssh-action@master
-  #     with:
-  #       host: ${{ secrets.HOST }}
-  #       username: ${{ secrets.USER }}
-  #       key: ${{ secrets.SSH_KEY }}
-  #       passphrase: ${{ secrets.SSH_PASSPHRASE }}
-  #       script: |
-  #         cd kittygram
-  #         sudo docker compose -f docker-compose.production.yml pull
-  #         sudo docker compose -f docker-compose.production.yml down
-  #         sudo docker compose -f docker-compose.production.yml up -d
-  #         sudo docker compose -f docker-compose.production.yml exec backend python manage.py migrate
-  #         sudo docker compose -f docker-compose.production.yml exec backend python manage.py collectstatic
-  #         sudo docker compose -f docker-compose.production.yml exec backend cp -r /app/collected_static/. /static/static/
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_push_to_docker_hub
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+    - name: Copy docker-compose.yml, nginx.conf, .env via ssh
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        source: "infra/docker-compose.yml,infra/nginx.conf,infra/.env"
+        target: "foodgram/"
+        strip_components: 1
+    - name: Executing remote ssh commands to deploy
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        script: |
+          cd foodgram
+          sudo docker-compose stop
+          sudo docker rm val911/foodgram_backend:latest
+          sudo docker rm val911/foodgram_frontend:latest  
+          sudo docker compose -f docker-compose.yml pull
+          sudo docker compose -f docker-compose.yml down
+          sudo docker compose -f docker-compose.yml up -d
+          sudo docker compose -f docker-compose.yml exec backend python manage.py makemigrations
+          sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
+          sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
+          sudo docker compose -f docker-compose.yml exec backend cp -r /app/static/. /app/static_volume/
+          sudo docker compose -f docker-compose.yml exec backend python manage.py load_data
+          sudo docker image prune -f
 
-  # send_message:
-  #   runs-on: ubuntu-latest
-  #   needs: deploy
-  #   if: github.ref == 'refs/heads/main'
-  #   steps:
-  #   - name: Send message
-  #     uses: appleboy/telegram-action@master
-  #     with:
-  #       to: ${{ secrets.TELEGRAM_TO }}
-  #       token: ${{ secrets.TELEGRAM_TOKEN }}
-  #       message: Деплой успешно выполнен!
+  send_message:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: github.ref == 'refs/heads/master'
+    steps:
+    - name: Send message
+      uses: appleboy/telegram-action@master
+      with:
+        to: ${{ secrets.TELEGRAM_TO }}
+        token: ${{ secrets.TELEGRAM_TOKEN }}
+        message: Деплой успешно выполнен!
