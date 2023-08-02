@@ -2,8 +2,11 @@ from django.contrib import admin
 
 from .models import Subscription, User
 
+# from django.contrib.auth.admin import UserAdmin
+
 
 @admin.register(User)
+# class UserAdmin(UserAdmin):
 class UserAdmin(admin.ModelAdmin):
     search_fields = ('id', 'first_name', 'last_name')
     list_display = ('id', 'username', 'first_name', 'last_name')

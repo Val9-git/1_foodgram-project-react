@@ -9,12 +9,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = ('django-insecure-%y!%d!^v%unf=iusexl6)'
-              '-h!fl&9tx0m8x0-yg#ft#xtlt(c*6')
+# SECRET_KEY = 'django-insecure-%y!%d!^v%unf=iusexl6)-h!fl&9tx0m8x0-yg#ft#xtlt(c*6'
+SECRET_KEY = os.getenv('SECRET_KEY', default=True)
 
-DEBUG = True
+# DEBUG = True
+DEBUG = os.getenv('DEBUG') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['vfoodgram.ddns.net', '62.84.120.67', 'localhost', '127.0.0.1']
 
 
 INSTALLED_APPS = [
@@ -64,10 +65,22 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        # Меняем настройку Django: теперь для работы будет использоваться
+        # бэкенд postgresql
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'django'),
+        'USER': os.getenv('POSTGRES_USER', 'django'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432)
     }
 }
 
