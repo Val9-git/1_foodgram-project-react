@@ -1,5 +1,13 @@
 # praktikum_new_diplom
 ### Как запустить проект:
+Данные:
+Домен: http://vfoodgram.ddns.net/
+superuser e-mail: v.lozitskiy@yandex.ru
+superuser password: admin
+superuser e-mail: v.lozitskiy@ya.ru
+superuser password: user1user1
+
+```
 
 Клонировать репозиторий и перейти в него в командной строке:
 
