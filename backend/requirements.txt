@@ -16,7 +16,6 @@ django-cors-headers==3.13.0
 python-dotenv==1.0.0
 gunicorn==20.1.0
 django_filter==22.1
-# djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
 flake8-isort==6.0.0
 flake8==5.0.4

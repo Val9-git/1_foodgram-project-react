@@ -69,12 +69,6 @@ class User(AbstractUser):
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
 
-        # constraints = [
-        #     models.CheckConstraint(
-        #         check=~models.Q(username__iexact="me"),
-        #         name="username_is_not_me"
-        #     )
-        # ]
     def __str__(self):
         return self.username
 

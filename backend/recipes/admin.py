@@ -48,5 +48,3 @@ class FavoritesAdmin(admin.ModelAdmin):
 class ShoppingCartAdmin(admin.ModelAdmin):
     """Модель списка покупок в админпанели."""
     list_display = ('id', 'recipe', 'user')
-
-# admin.site.register(Tag)

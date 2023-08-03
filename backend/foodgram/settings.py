@@ -9,10 +9,8 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# SECRET_KEY = 'django-insecure-%y!%d!^v%unf=iusexl6)-h!fl&9tx0m8x0-yg#ft#xtlt(c*6'
 SECRET_KEY = os.getenv('SECRET_KEY', default=True)
 
-# DEBUG = True
 DEBUG = os.getenv('DEBUG') == 'True'
 
 ALLOWED_HOSTS = ['vfoodgram.ddns.net', '62.84.120.67', 'localhost', '127.0.0.1']
@@ -65,16 +63,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
-        # Меняем настройку Django: теперь для работы будет использоваться
-        # бэкенд postgresql
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'django'),
         'USER': os.getenv('POSTGRES_USER', 'django'),
@@ -123,7 +113,6 @@ REST_FRAMEWORK = {
 DJOSER = {
     "LOGIN_FIELD": "email",
     "SERIALIZERS": {
-        # "user_create": "api.serializers.CustomUserSerializer",
         "user": "api.serializers.CustomUserSerializer",
         "current_user": "api.serializers.CustomUserSerializer",
     },
@@ -154,15 +143,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
-
-# PROJECT_CONSTANTS = {
-#     'LENGTH_TAG_NAME': 100,
-#     'LENGTH_HEX_COLOR': 7,
-#     'LENGTH_INGRIDIENT_NAME': 200,
-#     'LENGTH_MEASUREMENT_UNIT': 200,
-#     'LENGTH_RECIPE_NAME': 200,
-#     'LENGTH_SHORTWORD': 50,
-#     'LENGTH_WORD': 150,
-#     'LENGTH_EMAIL': 254,
-#     'LENGTH_PASSWORD': 500,
-# }
