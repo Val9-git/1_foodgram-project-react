@@ -75,7 +75,7 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
-    - name: Copy docker-compose.yml, nginx.conf, .env via ssh
+    - name: Copy docker-compose.yml, nginx.conf, via ssh
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
@@ -96,11 +96,9 @@ jobs:
           cd foodgram
           sudo docker-compose stop
           # sudo docker-compose rm backend
-          # sudo docker rm val911/foodgram_backend:latest
-          # sudo docker rm val911/foodgram_frontend:latest 
-          sudo docker image prune -f 
-          sudo docker compose -f docker-compose.yml pull
           sudo docker compose -f docker-compose.yml down
+          sudo docker image prune -a -f 
+          sudo docker compose -f docker-compose.yml pull
           sudo docker compose -f docker-compose.yml up -d
           sudo docker compose -f docker-compose.yml exec backend python manage.py makemigrations
           sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
