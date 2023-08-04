@@ -22,7 +22,7 @@ services:
     env_file:
      - .env
     ports:
-     - "6000:6000"  # Определение порта 6000
+     - "6000:6000"
 
   frontend:
     container_name: frontend
