@@ -1,7 +1,7 @@
 from constants import (LENGTH_HEX_COLOR, LENGTH_INGRIDIENT_NAME,
                        LENGTH_MEASUREMENT_UNIT, LENGTH_RECIPE_NAME,
                        LENGTH_TAG_NAME)
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from users.models import User
 
@@ -94,7 +94,7 @@ class Recipe(models.Model):
 
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления в минутах',
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(1), MaxValueValidator(999)],
     )
 
     class Meta:
@@ -123,7 +123,7 @@ class IngredientAmount(models.Model):
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество',
         default=0,
-        validators=[MinValueValidator(1)],
+        validators=[MinValueValidator(1), MaxValueValidator(999)],
     )
 
     class Meta:

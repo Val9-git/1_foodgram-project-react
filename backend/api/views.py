@@ -21,24 +21,59 @@ from .serializers import (CustomUserSerializer, IngredientSerializer,
 
 class BaseGetAddRemoveMixin:
     """Базовый миксин для получения, добавления и удаления элементов."""
+
     def get_user_items(self, user, model_class):
         items = model_class.objects.filter(user=user)
         return items
 
-    def perform_add_item(self, user, instance, model_class):
-        try:
-            model_class.objects.get(user=user, recipe=instance)
-        except model_class.DoesNotExist:
-            model_class.objects.create(user=user, recipe=instance)
-            return True
-        return False
+    def add_or_remove(self, request, pk, model_class, serializer_class):
+        instance = get_object_or_404(model_class, pk=pk)
 
-    def perform_remove_item(self, user, instance, model_class):
+        if request.method == 'DELETE':
+            deleted, _ = model_class.objects.filter(
+                user=request.user, recipe=instance
+            ).delete()
+            if deleted:
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
         try:
-            model_class.objects.get(user=user, recipe=instance).delete()
-            return True
+            model_class.objects.get(user=request.user, recipe=instance)
         except model_class.DoesNotExist:
-            return False
+            model_class.objects.create(user=request.user, recipe=instance)
+            serializer = serializer_class(
+                data={'user': request.user.id, 'recipe': instance.id}
+            )
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            action_serializer = ShortRecipeSerializer(instance)
+            return Response(
+                action_serializer.data, status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(status=status.HTTP_200_OK)
+
+
+# class BaseGetAddRemoveMixin:
+#     """Базовый миксин для получения, добавления и удаления элементов."""
+#     def get_user_items(self, user, model_class):
+#         items = model_class.objects.filter(user=user)
+#         return items
+
+#     def perform_add_item(self, user, instance, model_class):
+#         try:
+#             model_class.objects.get(user=user, recipe=instance)
+#         except model_class.DoesNotExist:
+#             model_class.objects.create(user=user, recipe=instance)
+#             return True
+#         return False
+
+#     def perform_remove_item(self, user, instance, model_class):
+#         try:
+#             model_class.objects.get(user=user, recipe=instance).delete()
+#             return True
+#         except model_class.DoesNotExist:
+#             return False
 
 
 class UsersViewSet(DjoserUserViewSet, BaseGetAddRemoveMixin):
@@ -97,18 +132,11 @@ class UsersViewSet(DjoserUserViewSet, BaseGetAddRemoveMixin):
         detail=True,
         permission_classes=[IsAuthenticated],
     )
-    def subscribe(self, request, id):
-        author = get_object_or_404(User, id=id)
-        author.recipes_count = author.recipes.count()
-        serializer = SubscriptionSerializer(
-            author, data=request.data, context={'request': request}
+    def manage_subscriptions(self, request, pk):
+        """Подписка/отписка от авторов."""
+        return self.add_or_remove(
+            request, pk, Subscription, SubscriptionSerializer
         )
-        serializer.is_valid(raise_exception=True)
-        if request.method == 'POST':
-            Subscription.objects.create(user=request.user, author=author)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        Subscription.objects.filter(author=author, user=request.user).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class TagViewSet(CustomGetViewSet):
@@ -151,29 +179,10 @@ class RecipeViewSet(viewsets.ModelViewSet, BaseGetAddRemoveMixin):
             IsAuthorOrReadOnly,
         ),
     )
-    def favorite(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, id=pk)
-        is_added = self.perform_add_item(request.user, recipe, Favorites)
-
-        if request.method == 'POST':
-            if is_added:
-                serializer = ShortRecipeSerializer(
-                    recipe, context={'request': request}
-                )
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(
-                {'errors': 'Рецепт уже в избранном'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not is_added:
-            self.perform_remove_item(request.user, recipe, Favorites)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(
-            {'errors': 'Рецепта нет в избранном'},
-            status=status.HTTP_400_BAD_REQUEST,
+    def manage_favorite(self, request, pk):
+        """Добавление/удаление рецепта в избранное."""
+        return self.add_or_remove(
+            request, pk, Favorites, ShortRecipeSerializer
         )
 
     @action(
@@ -184,29 +193,10 @@ class RecipeViewSet(viewsets.ModelViewSet, BaseGetAddRemoveMixin):
             IsAuthorOrReadOnly,
         ),
     )
-    def shopping_cart(self, request, pk=None):
-        recipe = get_object_or_404(Recipe, id=pk)
-        is_added = self.perform_add_item(request.user, recipe, ShoppingCart)
-
-        if request.method == 'POST':
-            if is_added:
-                serializer = ShortRecipeSerializer(
-                    recipe, context={'request': request}
-                )
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            return Response(
-                {'errors': 'Рецепт уже в корзине'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        if not is_added:
-            self.perform_remove_item(request.user, recipe, ShoppingCart)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(
-            {'errors': 'Рецепта нет в корзине'},
-            status=status.HTTP_400_BAD_REQUEST,
+    def manage_shopping_cart(self, request, pk):
+        """Добавление/удаление рецепта в корзину покупок."""
+        return self.add_or_remove(
+            request, pk, ShoppingCart, ShortRecipeSerializer
         )
 
     @action(
