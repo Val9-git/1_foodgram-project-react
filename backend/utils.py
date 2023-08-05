@@ -1,11 +1,10 @@
 import base64
 
+from api.serializers import ShortRecipeSerializer
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 from rest_framework.response import Response
-
-from backend.api.serializers import ShortRecipeSerializer
 
 
 class Base64ImageField(serializers.ImageField):
