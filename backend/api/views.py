@@ -12,8 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscription, User
-
-from backend.utils import BaseGetAddRemoveMixin
+from utils import BaseGetAddRemoveMixin
 
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeReadSerializer,
