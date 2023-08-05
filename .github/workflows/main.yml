@@ -94,6 +94,7 @@ jobs:
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           cd foodgram
+          sudo systemctl stop nginx
           sudo docker-compose stop
           # sudo docker-compose rm backend
           sudo docker compose -f docker-compose.yml down

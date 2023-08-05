@@ -7,73 +7,18 @@ from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserUserViewSet
 from recipes.models import (Favorites, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
-from rest_framework import permissions, status, viewsets
+from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscription, User
 
+from backend.utils import BaseGetAddRemoveMixin
+
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeReadSerializer,
                           ShortRecipeSerializer, SubscriptionSerializer,
                           TagSerializer)
-
-
-class BaseGetAddRemoveMixin:
-    """Базовый миксин для получения, добавления и удаления элементов."""
-
-    def get_user_items(self, user, model_class):
-        items = model_class.objects.filter(user=user)
-        return items
-
-    def add_or_remove(self, request, pk, model_class, serializer_class):
-        instance = get_object_or_404(model_class, pk=pk)
-
-        if request.method == 'DELETE':
-            deleted, _ = model_class.objects.filter(
-                user=request.user, recipe=instance
-            ).delete()
-            if deleted:
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        try:
-            model_class.objects.get(user=request.user, recipe=instance)
-        except model_class.DoesNotExist:
-            model_class.objects.create(user=request.user, recipe=instance)
-            serializer = serializer_class(
-                data={'user': request.user.id, 'recipe': instance.id}
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            action_serializer = ShortRecipeSerializer(instance)
-            return Response(
-                action_serializer.data, status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(status=status.HTTP_200_OK)
-
-
-# class BaseGetAddRemoveMixin:
-#     """Базовый миксин для получения, добавления и удаления элементов."""
-#     def get_user_items(self, user, model_class):
-#         items = model_class.objects.filter(user=user)
-#         return items
-
-#     def perform_add_item(self, user, instance, model_class):
-#         try:
-#             model_class.objects.get(user=user, recipe=instance)
-#         except model_class.DoesNotExist:
-#             model_class.objects.create(user=user, recipe=instance)
-#             return True
-#         return False
-
-#     def perform_remove_item(self, user, instance, model_class):
-#         try:
-#             model_class.objects.get(user=user, recipe=instance).delete()
-#             return True
-#         except model_class.DoesNotExist:
-#             return False
 
 
 class UsersViewSet(DjoserUserViewSet, BaseGetAddRemoveMixin):
