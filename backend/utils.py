@@ -1,6 +1,6 @@
+# file utils.py
 import base64
 
-from api.serializers import ShortRecipeSerializer
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
@@ -25,6 +25,7 @@ class BaseGetAddRemoveMixin:
         return items
 
     def add_or_remove(self, request, pk, model_class, serializer_class):
+        from api.serializers import ShortRecipeSerializer
         instance = get_object_or_404(model_class, pk=pk)
 
         if request.method == 'DELETE':
