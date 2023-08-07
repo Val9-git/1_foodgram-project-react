@@ -5,6 +5,7 @@ from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet as DjoserUserViewSet
+from mixins import BaseGetAddRemoveMixin
 from recipes.models import (Favorites, Ingredient, IngredientAmount, Recipe,
                             ShoppingCart, Tag)
 from rest_framework import permissions, viewsets
@@ -12,7 +13,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscription, User
-from utils import BaseGetAddRemoveMixin
 
 from .serializers import (CustomUserSerializer, IngredientSerializer,
                           RecipeCreateSerializer, RecipeReadSerializer,
