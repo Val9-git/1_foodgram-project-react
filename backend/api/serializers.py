@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
 from users.models import Subscription, User
 
-from fields import Base64ImageField
+from .fields import Base64ImageField
 
 
 class CustomUserSerializer(UserSerializer):
