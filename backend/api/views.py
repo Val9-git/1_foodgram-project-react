@@ -165,4 +165,3 @@ class RecipeViewSet(viewsets.ModelViewSet,
             amount = item['sum_amount']
             response.write(f'{name} ({measurement_unit}) - {amount}\n')
         return response
-
