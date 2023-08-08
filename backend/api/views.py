@@ -1,6 +1,3 @@
-from api.filters import IngredientFilter, RecipeFilter
-from api.mixins import CustomGetViewSet
-from api.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from django.db.models import BooleanField, Case, Count, Sum, When
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
@@ -13,7 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from users.models import Subscription, User
 
-from .mixins import BaseGetAddRemoveMixin
+from .filters import IngredientFilter, RecipeFilter
+from .mixins import BaseGetAddRemoveMixin, CustomGetViewSet
+from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
 from .serializers import (AddToFavoritesSerializer, CustomUserSerializer,
                           IngredientSerializer, RecipeCreateSerializer,
                           RecipeReadSerializer, ShoppingCartSerializer,
@@ -108,7 +107,9 @@ class IngredientViewSet(CustomGetViewSet):
     pagination_class = None
 
 
-class RecipeViewSet(viewsets.ModelViewSet, BaseGetAddRemoveMixin):
+class RecipeViewSet(viewsets.ModelViewSet,
+                    BaseGetAddRemoveMixin
+                    ):
     """Вьюсет для рецептов."""
     queryset = Recipe.objects.all()
     filterset_class = RecipeFilter
@@ -143,6 +144,11 @@ class RecipeViewSet(viewsets.ModelViewSet, BaseGetAddRemoveMixin):
             request, pk, ShoppingCart, ShoppingCartSerializer,
         )
 
+    @action(
+        detail=False, methods=['GET'], url_path='download_shopping_cart',
+        url_name='download_shopping_cart',
+        permission_classes=(permissions.IsAuthenticated,)
+    )
     def download_shopping_cart(self, request, *args, **kwargs):
         response = HttpResponse(content_type='text/plain')
         response[
@@ -159,3 +165,4 @@ class RecipeViewSet(viewsets.ModelViewSet, BaseGetAddRemoveMixin):
             amount = item['sum_amount']
             response.write(f'{name} ({measurement_unit}) - {amount}\n')
         return response
+
