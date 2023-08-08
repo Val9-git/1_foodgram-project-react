@@ -5,6 +5,7 @@ from recipes.models import (Favorites, Ingredient, IngredientAmount, Recipe,
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.serializers import PrimaryKeyRelatedField
+from rest_framework.validators import UniqueTogetherValidator
 from users.models import Subscription, User
 
 from .fields import Base64ImageField
@@ -248,3 +249,33 @@ class ShortRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class AddToFavoritesSerializer(serializers.ModelSerializer):
+    """Сериализатор для добавления в избранное."""
+
+    class Meta:
+        model = Favorites
+        fields = ('user', 'recipe')
+        validators = (
+            UniqueTogetherValidator(
+                queryset=Favorites.objects.all(),
+                fields=('user', 'recipe'),
+                message='Рецепт уже в избранном'
+            ),
+        )
+
+
+class ShoppingCartSerializer(serializers.ModelSerializer):
+    """Сериализатор для добавления в список покупок."""
+
+    class Meta:
+        model = ShoppingCart
+        fields = ('user', 'recipe')
+        validators = (
+            UniqueTogetherValidator(
+                queryset=ShoppingCart.objects.all(),
+                fields=('user', 'recipe'),
+                message='Рецепт уже в списке покупок'
+            ),
+        )
