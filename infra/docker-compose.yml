@@ -21,8 +21,8 @@ services:
      - db
     env_file:
      - .env
-    # ports:
-    #  - "6000:6000"
+    ports:
+     - "6000:6000"
 
   frontend:
     container_name: frontend
