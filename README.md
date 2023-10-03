@@ -151,6 +151,6 @@ python3 manage.py runserver
 
 ```
 frontend: Яндекс Практикум;
-backend, DevOps: VL;
+backend, DevOps: Valeriy Lozitskiy;
 Ревьюер: Дмитрий Кубарев.
 ```
