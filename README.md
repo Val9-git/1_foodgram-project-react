@@ -1,12 +1,11 @@
 ## **FOODGRAM - PROJECT - REACT, «Продуктовый помощник».**
 
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
+
 ## Данные:
 ```
 Домен: http://vfoodgram.ddns.net/
-superuser e-mail: v.lozitskiy@yandex.ru
-superuser password: admin
-superuser e-mail: v.lozitskiy@ya.ru
-superuser password: user1user1
+
 ```
 
 ## Описание проекта:
