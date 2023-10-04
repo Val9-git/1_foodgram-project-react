@@ -1,4 +1,4 @@
-## **FOODGRAM - PROJECT - REACT, «Продуктовый помощник».**
+# **FOODGRAM - PROJECT - REACT, «Продуктовый помощник».**
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Django](https://img.shields.io/badge/django-%23092E20.svg?style=for-the-badge&logo=django&logoColor=white)
@@ -50,7 +50,7 @@
 При нажатии на название тега выводится список рецептов, отмеченных этим тегом. Фильтрация может проводится по нескольким тегам. При фильтрации на странице пользователя фильтруются только рецепты выбранного пользователя. Такой же принцип соблюдается при фильтрации списка избранного.
 
 ##### Дизайн-макеты проекта можно посмотреть на:
-Figma.com
+[Figma.com]
 
 ## Набор доступных эндпоинтов для API Foodgram:
 ```
@@ -95,9 +95,8 @@ Linux Ubuntu с публичным IP
 ```
 
 ## Как запустить проект:
-```
+
 Клонировать репозиторий и перейти в него в командной строке:
-```
 
 ```
 git clone git@github.com:Val9-git/1_foodgram-project-react.git
@@ -145,6 +144,84 @@ python3 manage.py migrate
 ```
 python3 manage.py runserver
 ```
+
+После выполнения вышеперечисленных инструкций проект доступен по адресу http://127.0.0.1:8000/
+
+## Подготовка сервера и деплой проекта
+
+Создать директорию foodgram/ в домашней директории сервера.
+
+В корне папки foodgram поместить файл .env, заполнить его по шаблону
+
+```
+  ALLOWED_HOSTS=<Ваш домен>, <IP сервера>
+  DEBUG=False
+
+  POSTGRES_USER=...
+  POSTGRES_PASSWORD=...
+  POSTGRES_DB=...
+  
+  DB_HOST=...
+  DB_PORT=...
+```
+Установить Nginx и настроить конфигурацию так, чтобы все запросы шли в контейнеры на порт 8000.
+
+```
+    sudo apt install nginx -y 
+    sudo nano etc/nginx/sites-enabled/default
+```
+
+Пример конфигурация nginx:
+
+```
+    server {
+        server_name <Ваш IP> <Домен вашего сайта>;
+        server_tokens off;
+        client_max_body_size 20M;
+    
+        location / {
+            proxy_set_header Host $http_host;
+            proxy_pass http://127.0.0.1:9000;
+    }
+```
+
+> При необходимости настройте SSL-соединение
+
+Установить docker и docker-compose
+
+```
+    sudo apt update
+    sudo apt install curl
+    curl -fSL https://get.docker.com -o get-docker.sh
+    sudo sh ./get-docker.sh
+    sudo apt-get install docker-compose-plugin   
+```
+
+Добавить в Secrets GitHub Actions данного репозитория на GitHub переменные окружения
+
+```
+    DOCKER_USERNAME=<имя пользователя DockerHub>
+    DOCKER_PASSWORD=<пароль от DockerHub>
+    
+    USER=<username для подключения к удаленному серверу>
+    HOST=<ip сервера>
+    PASSPHRASE=<пароль для сервера, если он установлен>
+    SSH_KEY=<ваш приватный SSH-ключ>
+    
+    TELEGRAM_TO=<id вашего Телеграм-аккаунта>
+    TELEGRAM_TOKEN=<токен вашего бота>
+```
+
+Запустить workflow проекта выполнив команды:
+
+```
+  git add .
+  git commit -m ''
+  git push
+```
+
+> С примерами запросов можно ознакомиться в спецификации API (<your_domain>/redoc)
+
 
 
 ## Авторы:
